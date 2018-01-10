@@ -1,4 +1,4 @@
-# Hookworms API
+# Hookworms API :snake:
 ### Getting Started
 ```
   $ npm install
