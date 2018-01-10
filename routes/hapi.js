@@ -26,7 +26,12 @@ const status = {
         desc: "Cannot find the requested data"
     }
 };
-
+var pressure = require("../controllers/PressureController.js");
+var temperature = require("../controllers/TemperatureController.js");
+var humidity = require("../controllers/HumidityController.js");
+var gyroscope = require("../controllers/GyroscopeController.js");
+var accelerometer = require("../controllers/AccelerometerController.js");
+var magnetometer = require("../controllers/MagnetometerController.js");
 
 var dataFetcher = (team, res) => {
 
@@ -34,7 +39,12 @@ var dataFetcher = (team, res) => {
     myRequests.push(rp(CATurl + "/api/temperature/" + team + "/3"));
     myRequests.push(rp(CATurl + "/api/accelerometer/" + team + "/3"));
     myRequests.push(rp(CATurl + "/api/din1/"+team+"/3"));
+    // =============================== Fake Data Test ==============================================
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/todos"));
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/albums"));
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/photos"));
     Promise.all(myRequests).then(function(arrayOfHtml){
+
         let temparature_data = arrayOfHtml[0]? JSON.parse(arrayOfHtml[0]).data: null;
         let accelerometer_data = arrayOfHtml[1]? JSON.parse(arrayOfHtml[1]).data: null;
         let din1_data = arrayOfHtml[2]? JSON.parse(arrayOfHtml[2]).data: null;
@@ -44,6 +54,23 @@ var dataFetcher = (team, res) => {
             "accelerometer": accelerometer_data,
             "din1": din1_data
         });
+
+        // =============================== Fake Data Test ==============================================
+        // let temparature_data = arrayOfHtml[0]? JSON.parse(arrayOfHtml[0]): null;
+        // let accelerometer_data = arrayOfHtml[1]? JSON.parse(arrayOfHtml[1]): null;
+        // let din1_data = arrayOfHtml[2]? JSON.parse(arrayOfHtml[2]): null;
+        // console.log(temparature_data.length);
+        // console.log(accelerometer_data.length);
+        // console.log(din1_data.length);
+        //
+        // let result = ({
+        //     "id": team,
+        //     "temparature": [{sensID: 1, val: 5, date: 'day1'},{sensID: 2, val: 6, date: 'dayy'}],
+        //     "accelerometer": [{sensID: 5, val_x: 1, val_y: 2, val_z: 3, date: 'Date'}],
+        //     "din1": [{sensID: 2, val: 6, date: 'dayy'}, {sensID: 1, val: 5, date: 'day1'}]
+        // });
+
+
         res.render('team', {
             title: 'Team ' + team,
             result: result
@@ -71,6 +98,10 @@ router.get('/teams/all/', function(req, res, next) {
         myRequests.push(rp(CATurl + "/api/temperature/" + device_node + "/3"));
         myRequests.push(rp(CATurl + "/api/accelerometer/" + device_node + "/3"));
         myRequests.push(rp(CATurl + "/api/din1/"+device_node+"/3"));
+    // =============================== Fake Data Test ==============================================
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/todos"));
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/albums"));
+    //     myRequests.push(rp("https://jsonplaceholder.typicode.com/photos"));
     });
     Promise.all(myRequests).then(function (arrayOfData){
         console.log("myRequests.length = " + myRequests.length);
@@ -87,6 +118,20 @@ router.get('/teams/all/', function(req, res, next) {
                 "accelerometer": accelerometer_data,
                 "din1": din1_data
             });
+
+            // =============================== Fake Data Test ==============================================
+            // let temparature_data = arrayOfData[i]? JSON.parse(arrayOfData[i]): null;
+            // let accelerometer_data = arrayOfData[i+1]? JSON.parse(arrayOfData[i+1]): null;
+            // let din1_data = arrayOfData[i+2]? JSON.parse(arrayOfData[i+2]): null;
+            // console.log(temparature_data.length);
+            // console.log(accelerometer_data.length);
+            // console.log(din1_data.length);
+            // result_data_list.push({
+            //     "id": nodes_list[(i)/3],
+            //     "temparature": [{sensID: 1, val: 5, date: 'day1'},{sensID: 2, val: 6, date: 'dayy'}],
+            //     "accelerometer": [{sensID: 5, val_x: 1, val_y: 2, val_z: 3, date: 'Date'}],
+            //     "din1": [{sensID: 2, val: 6, date: 'dayy'}, {sensID: 1, val: 5, date: 'day1'}]
+            // })
         }
         console.log("result_data_list");
         console.log(result_data_list);
@@ -117,6 +162,55 @@ router.post('/showresponse', function(req, res, next) {
         LAT: req.body.LAT,
         LONG: req.body.LONG
     });
+});
+
+router.get('/pressure', function(req, res, next) {
+    res.locals.datetime = null;
+    pressure.list(req, res);
+});
+router.post('/pressure', function(req, res, next) {
+    pressure.list(req, res);
+});
+
+router.get('/temperature', function(req, res, next) {
+    res.locals.datetime = null;
+    temperature.list(req, res);
+});
+router.post('/temperature', function(req, res, next) {
+    console.log("POST")
+    temperature.list(req, res);
+});
+
+router.get('/humidity', function(req, res, next) {
+    res.locals.datetime = null;
+    humidity.list(req, res);
+});
+router.post('/humidity', function(req, res, next) {
+    humidity.list(req, res);
+});
+
+router.get('/gyroscope', function(req, res, next) {
+    res.locals.datetime = null;
+    gyroscope.list(req, res);
+});
+router.post('/gyroscope', function(req, res, next) {
+    gyroscope.list(req, res);
+});
+
+router.get('/accelerometer', function(req, res, next) {
+    res.locals.datetime = null;
+    accelerometer.list(req, res);
+});
+router.post('/accelerometer', function(req, res, next) {
+    accelerometer.list(req, res);
+});
+
+router.get('/magnetometer', function(req, res, next) {
+    res.locals.datetime = null;
+    magnetometer.list(req, res);
+});
+router.post('/magnetometer', function(req, res, next) {
+    magnetometer.list(req, res);
 });
 
 module.exports = router;
